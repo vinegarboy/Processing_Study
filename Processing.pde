@@ -1,7 +1,7 @@
 void setup()
 {
   print("HelloWorld");
-  size(600, 600);
+  size(1920, 1080);
 }
 
 void draw(){
@@ -9,6 +9,7 @@ void draw(){
   background(255, 0, 0);
   fill(0, 0, 255);
   textSize(24);
-  text("HelloWorld",300,300);
-  save("img.jpg");
+  text("1920*1080*3="+(1920*1080*3),0,300);
+  save("img.jpeg");
+  save("img.bmp")
 }
