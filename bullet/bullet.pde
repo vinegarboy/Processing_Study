@@ -1,25 +1,10 @@
-public class bullets{
-    int _x,_y;
-    public void Set(int a,int b) {
-        _x = a;
-        _y = b;
-    }
-    public void Show() {
-        fill(255,241,0);
-        rect(_x, _y, 70, 30);
-        _x++;
-    }
-}
-
 int x=512;
 int g = 0;
 int y=512;
-bullets[] bl = new bullets[x];
+int _x=0,_y=0,speed = 10;
+boolean showflag = false;
 void settings(){
     size(x, y);
-    for(int i =0;i<bl.length;i++){
-        bl[i] = new bullets();
-    }
 }
 
 void setup() {
@@ -27,14 +12,23 @@ void setup() {
 
 void draw(){
     background(255,255,255);
-    if(mousePressed==true){
-        bl[g].Set(mouseX,mouseY);
-        g++;
-        if(g>=bl.length){
-            g=0;
+    fill(128,128,128);
+    rect(mouseX-25, mouseY-25, 50, 50);
+    if(showflag){
+        _x+=speed;
+        fill(255,241,0);
+        rect(_x, _y-15, 70, 30);
+        if(x+70<_x){
+            showflag = false;
         }
     }
-    for(int i =0;i<bl.length;i++){
-        bl[i].Show();
+    if(mousePressed==true){
+        if(!showflag){
+            _x = mouseX;
+            _y = mouseY;
+            fill(255,241,0);
+            rect(_x, _y-15, 70, 30);
+            showflag = true;
+        }
     }
 }
