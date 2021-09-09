@@ -1,16 +1,7 @@
-void setup()
-{
-  size(480, 120);
-  noStroke();
-  background(204, 226, 225);
-  fill(255, 0, 0, 80);
-  ellipse(240, 40, 80, 60);
-  fill(0, 255, 0, 80);
-  ellipse(260, 80, 80, 60);
-  fill(0, 0, 255, 80);
-  ellipse(220, 80, 80, 60);
-}
-
-void draw(){
-  
+size(400, 400);
+int d = width/10;
+for(int x=0;x<10;x++){
+	for(int y=0;y<10;y++){
+		ellipse((d/2)+(x*d), (d/2)+(y*d), d,d);
+	}
 }
