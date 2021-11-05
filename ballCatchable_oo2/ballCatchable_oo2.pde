@@ -21,21 +21,18 @@ void setup() {
     ball0.y  = random(d / 2, height / 5);
     ball0.vx = random(vx0min, vx0max);
     ball0.vy = random(vy0min, vy0max);
+    ball0.hue = 0;
 }
 
 void draw() {
     background(0, 0, 100);
-    fill(calcHue(ball0.vx, ball0.vy), 100, 100);
+    fill(ball0.hue, 100, 100);
     ellipse(ball0.x, ball0.y, d, d);
     ball0.BoundBall();
 }
 
-float calcHue(float vx, float vy) {
-    return (sqrt(vx * vx + vy * vy) * 16) % hueMax;
-}
-
 class Ball{
-    float x,y,vx,vy;
+    float x,y,vx,vy,hue;
     void BoundBall() {
         if((x-mouseX)*(x-mouseX)+(y-mouseY)*(y-mouseY)-(d*d)/4>0){
             x  += vx;
@@ -54,6 +51,11 @@ class Ball{
             } else if (y < d / 2) {
                 vy = - vy * elas;
                 y = d / 2;
+            }
+        }else{
+            hue++;
+            if(hue>hueMax){
+                hue=0;
             }
         }
     }

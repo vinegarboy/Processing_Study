@@ -8,7 +8,7 @@ final float elas = 0.98;
 final float d = 40;
 final float hueMax = 360.0;
 
-Ball ball0;
+Ball[] balls = new Ball[int(random(2,10))];
 
 void setup() {
     frameRate(fps);
@@ -16,18 +16,22 @@ void setup() {
     noStroke();
     colorMode(HSB, hueMax, 100, 100);
     fill(0, 0, 0);
-    ball0 = new Ball();
-    ball0.x  = random(d / 2, width - d / 2);
-    ball0.y  = random(d / 2, height / 5);
-    ball0.vx = random(vx0min, vx0max);
-    ball0.vy = random(vy0min, vy0max);
+    for(int i = 0;i<balls.length;i++){
+        balls[i] = new Ball();
+        balls[i].x  = random(d / 2, width - d / 2);
+        balls[i].y  = random(d / 2, height / 5);
+        balls[i].vx = random(vx0min, vx0max);
+        balls[i].vy = random(vy0min, vy0max);
+    }
 }
 
 void draw() {
     background(0, 0, 100);
-    fill(calcHue(ball0.vx, ball0.vy), 100, 100);
-    ellipse(ball0.x, ball0.y, d, d);
-    ball0.BoundBall();
+    for(int i = 0;i<balls.length;i++){
+        fill(calcHue(balls[i].vx, balls[i].vy), 100, 100);
+        ellipse(balls[i].x, balls[i].y, d, d);
+        balls[i].BoundBall();
+    }
 }
 
 float calcHue(float vx, float vy) {
