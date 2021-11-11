@@ -37,7 +37,7 @@ class Circles{
         }else{
             hue = -(degrees(rad)*2);
         }
-        c_width = dist(mouseX,mouseY,pmouseX,pmouseY);
+        c_width = 2*dist(mouseX,mouseY,pmouseX,pmouseY);
         c_height = c_width;
     }
 }
