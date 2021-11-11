@@ -30,6 +30,7 @@ class Circles{
             ellipse(width/2,height/2,width-c_width,height-c_height);
         }
     }
+
     void make(){
         float rad = atan2(mouseX-(width/2),mouseY-(height/2));
         if(degrees(rad)>=0){
