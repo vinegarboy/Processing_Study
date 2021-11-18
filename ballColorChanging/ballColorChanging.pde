@@ -41,40 +41,45 @@ class Ball {
     float y;
     float vx;
     float vy;
+    int bounds = 0;
+    float hue = 0;
     int el = 1;
     int lb = 10;
     int hb = 150;
     void draw(){
-        if(el>0){
-            fill(0, 100, 100);
-        }else{
-            fill(180,100,100);
+        if(bounds>10){
+            bounds-=10;
+            hue+=40;
+            if(hue>hueMax){
+                hue=0;
+            }
         }
+        fill(hue,100,100);
         ellipse(x, y, d, d);
     }
 
     void move() {
         x  += vx;          // ボールが速度ぶん移動する
         vy += gravity;          // 速度のy成分に重力加速度を加算する
-        y  += vy;          // ボールが速度ぶん移動する
-        d+=el;
-        if(hb<d||lb>d){
-            el=-el;
-        }
+        y  += vy;
         if (x < d / 2) {
+            bounds++;
             vx = - vx * elas;
             x = d / 2;
             el=-el;
         } else if (x > width - d / 2) {
+            bounds++;
             vx = - vx  * elas;
             x = width - d / 2;
             el=-el;
         }
         if (y > height - d / 2) {
+            bounds++;
             vy = - vy * elas;
             y = height - d / 2;
             el=-el;
         } else if (y < d / 2) {
+            bounds++;
             vy = - vy * elas;
             y = d / 2;
             el=-el;
