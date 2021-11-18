@@ -1,5 +1,5 @@
-final int allvertex = 60;
-final float dis = 50;
+final int allvertex = 360;//円一周あたりに使う頂点数
+final float dis = 50;//半径
 PShape up,down,side;
 
 void setup()

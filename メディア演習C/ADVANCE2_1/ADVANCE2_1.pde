@@ -1,5 +1,5 @@
-final int allvertex = 360;
-final float dis = 50;
+final int allvertex = 360;//円一周あたりに使う頂点数
+final float dis = 50;//半径
 
 void setup()
 {
