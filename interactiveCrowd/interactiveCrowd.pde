@@ -80,10 +80,12 @@ class Ball {
 
     void inc(){
         if(b==null){
-            b=new Ball(x,y,-vx*1.5,-vy*1.5,d*0.9);
-            d=d*0.9;
-            vx*=1.3;
-            vy*=1.3;
+            if(d*0.9>5){
+                b=new Ball(x,y,-vx,-vy,d*0.9);
+                d=d*0.9;
+            }else{
+                b=new Ball(x,y,-vx,-vy,d);
+            }
         }else if(b != null){
             b.inc();
         }
