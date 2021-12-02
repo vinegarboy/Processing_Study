@@ -284,7 +284,7 @@ class BlockBreak {
             int y;                       // 左上頂点のy座標
             int sizeX;                   // ブロックの幅
             int sizeY;                   // ブロックの高さ
-            int broken_count = 3;
+            int broken_count = 2;
             boolean broken;              // ブロックが破壊されているか否か
             
             // コンストラクタ
@@ -298,7 +298,13 @@ class BlockBreak {
             
             // ブロックの描画メソッド
             void show() {
-                fill(0, 0, 255);       // ブロックの色は青
+                if(broken_count==2){
+                    fill(0, 0, 255);       // ブロックの色は青
+                }else if(broken_count==1){
+                    fill(0, 0, 200);
+                }else if(broken_count==0){
+                    fill(0, 0, 150);
+                }
                 rect(x, y, sizeX, sizeY);
             }
             
@@ -306,27 +312,39 @@ class BlockBreak {
             // 今回,ボールの衝突判定はボールの中心座標のみで行っている
             void collision(Ball ball) {
                 // ボールが貫通弾でないなら、衝突した際にボールの進行方向を変える(速度を変える)
-                if (!ball.getPenetrability()) {
+                
                     // ブロック左側に当たった場合
                     if ((ball.getX() >= x) && (ball.getX() <= (x + 5)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
                         ball.setVx( -1 * ball.getVx());
+                        if (ball.getPenetrability()) {
+                    broken_count=0;
+                }
                     }
                     // ブロック右側に当たった場合
                     if ((ball.getX() >= (x + sizeX - 5)) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
                         ball.setVx( -1 * ball.getVx());
+                        if (ball.getPenetrability()) {
+                    broken_count=0;
+                }
                     }
                     		 			    			    			
                     // ブロック上側に当たった場合
                     if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + 5))) {
                         ball.setVy( -1 * ball.getVy());
+                        if (ball.getPenetrability()) {
+                    broken_count=0;
+                }
                     }
                     
                     // ブロック下側に当たった場合
                     if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= (y + sizeY - 5)) && (ball.getY() <= (y + sizeY))) {
                         ball.setVy( -1 * ball.getVy());
+                        if (ball.getPenetrability()) {
+                    broken_count=0;
+                }
                     }
                     
-                }
+                
                 
                 // 衝突による破壊判定
                 if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
