@@ -32,6 +32,7 @@ class Tartle{
     }
     void walk(){
         y-=0.5;
+        foots.shake();
         if(sizes*3/2>y){
             y = sizes*3/2;
         }
@@ -44,16 +45,22 @@ class Tartle{
 }
 
 class Foot{
-    float siz;
+    float siz,md,_md = 0.3;
     Foot(float si){
         siz = si;
     }
     void draw(float x,float y){
         fill(50,50,70);
-        ellipse(x+siz,y-siz/2, siz,siz);
-        ellipse(x-siz,y-siz/2, siz,siz);
-        ellipse(x+(siz*2)/3,y+(siz*2)/3, siz,siz);
-        ellipse(x-(siz*2)/3,y+(siz*2)/3, siz,siz);
+        ellipse(x+siz,md+y-siz/2, siz,siz);
+        ellipse(x-siz,y-md-siz/2, siz,siz);
+        ellipse(x+(siz*2)/3,y-md+(siz*2)/3, siz,siz);
+        ellipse(x-(siz*2)/3,y+md+(siz*2)/3, siz,siz);
+    }
+    void shake(){
+        md+=_md;
+        if(md<-3||md>3){
+            _md = -_md;
+        }
     }
 }
 

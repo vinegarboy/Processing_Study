@@ -48,28 +48,35 @@ class Tartle{
         if(foots.touch(x,y)||body.touch(x,y)||head.touch(x,y)){
             ret = true;
             head.shake();
+            foots.shake();
         }
         return ret;
     }
 }
 
 class Foot{
-    float siz;
+    float siz,md,_md = 0.3;
     Foot(float si){
         siz = si;
     }
     void draw(float x,float y){
         fill(50,50,70);
-        ellipse(x+siz,y-siz/2, siz,siz);
-        ellipse(x-siz,y-siz/2, siz,siz);
-        ellipse(x+(siz*2)/3,y+(siz*2)/3, siz,siz);
-        ellipse(x-(siz*2)/3,y+(siz*2)/3, siz,siz);
+        ellipse(x+siz,md+y-siz/2, siz,siz);
+        ellipse(x-siz,y-md-siz/2, siz,siz);
+        ellipse(x+(siz*2)/3,y-md+(siz*2)/3, siz,siz);
+        ellipse(x-(siz*2)/3,y+md+(siz*2)/3, siz,siz);
     }
     boolean touch(float x,float y){
         if(dist(x+siz,y-siz/2, mouseX, mouseY)<siz||dist(x-siz,y-siz/2, mouseX, mouseY)<siz||dist(x-(siz*2)/3,y+(siz*2)/3, mouseX, mouseY)<siz||dist(x+(siz*2)/3,y+(siz*2)/3, mouseX, mouseY)<siz){
             return true;
         }else{
             return false;
+        }
+    }
+    void shake(){
+        md+=_md;
+        if(md<-3||md>3){
+            _md = -_md;
         }
     }
 }
