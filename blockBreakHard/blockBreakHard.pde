@@ -187,9 +187,9 @@ class BlockBreak {
         }
     }
     
-    /** 
+    /**
     * バー
-    */ 
+    */
     class Bar {
         final int y = height - 50;    // バーの左上のy座標 (底から50で固定)
         int sizeX;// バー全体の幅(なるべく5の倍数が良い)
