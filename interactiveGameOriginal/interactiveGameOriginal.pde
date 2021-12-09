@@ -67,12 +67,19 @@ void menu(){
         mode=2;
         pl = minim.loadFile(fumens[select_key].song_path);
         notes = new Note[fumens[select_key].notes_d.length];
+        for(int i =0;i<notes.length;i++){
+            string[] da = split(fumens[select_key].notes_d[i], ':');
+            notes[i] = new Note(da[0],da[1],da[2]);
+        }
     }
 }
 
 void play(){
     if(nf>180){
         pl.play();
+        for(int i =0;i<notes.length;i++){
+            notes[i].draw(nf);
+        }
     }
 }
 
@@ -106,7 +113,8 @@ class Note{
         sf = _sf;
     }
 
-    void draw(){
+    void draw(int nf){
+        if(nf>=sf&&nf<=sf+60)
         fill((360/60)*frame,100,100);
         ellipse(x, y, d, d);
         frame--;
