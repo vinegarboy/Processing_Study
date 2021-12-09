@@ -1,11 +1,12 @@
 import ddf.minim.*;
 
-Minim  minim  =  new Minim();
+Minim pl = new Minim(this);
 int mode=0;
 final int width_ = 600;
 final int height_ = 400;
 Fumen[] fumens;
 int select_key=0,nf=0;
+Note[] notes;
 
 void setup() {
     size(600,400);
@@ -64,12 +65,14 @@ void menu(){
     }
     if(keyPressed&&keyCode==ENTER){
         mode=2;
+        pl = minim.loadFile(fumens[select_key].song_path);
+        notes = new Note[fumens[select_key].notes_d.length];
     }
 }
 
 void play(){
     if(nf>180){
-
+        pl.play();
     }
 }
 
