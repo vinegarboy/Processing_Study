@@ -72,7 +72,9 @@ for(int i = 0;i<blockNumY;i++){
     			if(!block[i][d].isBroken()){
        			block[i][d].collision(ball);
     				block[i][d].show();
-    			}
+    			}else{
+            breakBlockNum++;
+          }
     		}
     	}
 

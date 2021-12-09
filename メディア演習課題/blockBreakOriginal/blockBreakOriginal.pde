@@ -1,5 +1,7 @@
 //
 // ブロック崩し (バー操作はマウス式)
+//実行することでプレイ可能
+//追加機能:お邪魔ボールとブロックの復活機能,スコア機能の追加。
 //
 
 // ブロック崩し本体
@@ -34,6 +36,7 @@ class BlockBreak {
     Ball ball;                                          // ボール定義
     Bar bar;                                            // バー定義
     Block[][] block;                                    // ブロック配列定義
+    int tokuten = 0;
     //コンストラクタ
     BlockBreak() {
         // ボールの生成
@@ -63,6 +66,28 @@ class BlockBreak {
             if(!block[i][d].isBroken()){
                 block[i][d].collision(ball);
                 block[i][d].show();
+                for(int l = 0;l<blockNumY;l++){
+                    for(int k=0;k<blockNumX;k++){
+                        if(block[l][k].add_ball!=null){
+                            block[i][d].collision(block[l][k].add_ball);
+                        }
+                    }
+                }
+            }else if(block[i][d].add_ball!=null){
+                if(block[i][d].add_ball.collision()==false){
+                    block[i][d].add_ball = null;
+                }else{
+                    block[i][d].add_ball.move();
+                    block[i][d].add_ball.show();
+                    bar.collision(block[i][d].add_ball);
+                }
+                breakBlockNum++;
+            }else{
+                block[i][d].count++;
+                if(block[i][d].count >= 600){
+                    block[i][d].respawn();
+                }
+                breakBlockNum++;
             }
         }
     }
@@ -87,7 +112,7 @@ class BlockBreak {
     fill(0, 0, 0);
     textSize(12);
     textAlign(CENTER, CENTER);
-    text("Block:" + (blockNumAll - breakBlockNum), width - 40, height - 25);   // 残りブロック数表示
+    text("Score:"+tokuten+"\nBlock:" + (blockNumAll - breakBlockNum), width - 40, height - 50);   // 残りブロック数表示
     bar.show();            // ボールを打ち返すためのボードを表示
     ball.show();           // ボールの描画
     }
@@ -153,7 +178,6 @@ class Ball {
         ellipse(x, y, d, d);      // ボールの描画
     }
 
-        // これ以降、SetterとGetter
     int getX() {
         return x;
     }
@@ -234,7 +258,6 @@ class Bar {
             }
         }
     }
-            // バー表示メソッド
     void show() {
         boxX[0] = mouseX - this.sizeX / 2;            // 左黒Boxの左上頂点のx座標
         boxX[1] = mouseX - 3 * (boxSizeX / 2);     // 左白Boxの左上頂点のx座標
@@ -242,122 +265,108 @@ class Bar {
         boxX[3] = mouseX + boxSizeX / 2;           // 右白Boxの左上頂点のx座標
         boxX[4] = mouseX + 3 * (boxSizeX / 2);      // 右黒Boxの左上頂点のx座標
         boxX[5] = mouseX + this.sizeX / 2;            // 右黒Boxの"右上"頂点のx座標
-                
-                // バーの描画
         fill(0, 0, 0);
         rect(boxX[0], y, boxSizeX, sizeY);        // 左黒Box
         fill(255, 255, 255);
         rect(boxX[1], y, boxSizeX, sizeY);        // 左白Box
-            fill(255, 0, 0);
-                rect(boxX[2], y, boxSizeX, sizeY);        // 中央赤Box
-                fill(255, 255, 255);
-                rect(boxX[3], y, boxSizeX, sizeY);        // 右黒Box
-                fill(0, 0, 0);
-                rect(boxX[4], y, boxSizeX, sizeY);        // 右白Box
-            }
-            
-            int getX(int i) {
-                return boxX[i];
-            }
-            
-            int getY() {
-                return y;
-            }
-            
-            int getSizeX() {
-                return sizeX;
-            }
-            
-            int getSizeY() {
-                return sizeY;
-            }
-            		 			    	
-        }
-        
-        /**
-        *    ブロック（ボールとブロックの衝突判定など）
-        */
-        class Block {
-            int x;                       // 左上頂点のx座標
-            int y;                       // 左上頂点のy座標
-            int sizeX;                   // ブロックの幅
-            int sizeY;                   // ブロックの高さ
-            int broken_count = 2;
-            boolean broken;              // ブロックが破壊されているか否か
-            
-            // コンストラクタ
-            Block(int x, int y, int sizeX, int sizeY) {
-                this.x = x;
-                this.y = y;
-                this.sizeX = sizeX;
-                this.sizeY = sizeY;
-                broken = false;
-            }
-            
+        fill(255, 0, 0);
+        rect(boxX[2], y, boxSizeX, sizeY);        // 中央赤Box
+        fill(255, 255, 255);
+        rect(boxX[3], y, boxSizeX, sizeY);        // 右黒Box
+        fill(0, 0, 0);
+        rect(boxX[4], y, boxSizeX, sizeY);        // 右白Box
+    }
+    int getX(int i) {
+        return boxX[i];
+    }
+    int getY() {
+        return y;
+    }
+
+    int getSizeX() {
+        return sizeX;
+    }
+
+    int getSizeY() {
+        return sizeY;
+    }
+}
+
+class Block {
+    int x;                       // 左上頂点のx座標
+    int y;                       // 左上頂点のy座標
+    int sizeX;                   // ブロックの幅
+    int sizeY;                   // ブロックの高さ
+    int broken_count = 2;
+    boolean broken;              // ブロックが破壊されているか否か
+    Ball add_ball;
+    int count = 0;
+            // コンストラ
+    Block(int x, int y, int sizeX, int sizeY) {
+        this.x = x;
+        this.y = y;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        broken = false;
+    }
+
+    void respawn(){
+        broken = false;
+        count = 0;
+        broken_count=2;
+    }
             // ブロックの描画メソッド
-            void show() {
-                if(broken_count==2){
-                    fill(0, 0, 255);       // ブロックの色は青
-                }else if(broken_count==1){
-                    fill(0, 0, 200);
-                }else if(broken_count==0){
-                    fill(0, 0, 150);
-                }
-                rect(x, y, sizeX, sizeY);
-            }
-            
+    void show() {
+        if(broken_count==2){
+            fill(0, 0, 255);       // ブロックの色は青
+        }else if(broken_count==1){
+            fill(0, 0, 200);
+        }else if(broken_count==0){
+            fill(0, 0, 150);
+        }
+        rect(x, y, sizeX, sizeY);
+    }
             // ボールとブロックとの衝突と破壊判定
             // 今回,ボールの衝突判定はボールの中心座標のみで行っている
-            void collision(Ball ball) {
+    void collision(Ball ball) {
                 // ボールが貫通弾でないなら、衝突した際にボールの進行方向を変える(速度を変える)
-                
                     // ブロック左側に当たった場合
-                    if ((ball.getX() >= x) && (ball.getX() <= (x + 5)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
-                        ball.setVx( -1 * ball.getVx());
-                        if (ball.getPenetrability()) {
-                    broken_count=0;
-                }
-                    }
-                    // ブロック右側に当たった場合
-                    if ((ball.getX() >= (x + sizeX - 5)) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
-                        ball.setVx( -1 * ball.getVx());
-                        if (ball.getPenetrability()) {
-                    broken_count=0;
-                }
-                    }
-                    		 			    			    			
-                    // ブロック上側に当たった場合
-                    if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + 5))) {
-                        ball.setVy( -1 * ball.getVy());
-                        if (ball.getPenetrability()) {
-                    broken_count=0;
-                }
-                    }
-                    
-                    // ブロック下側に当たった場合
-                    if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= (y + sizeY - 5)) && (ball.getY() <= (y + sizeY))) {
-                        ball.setVy( -1 * ball.getVy());
-                        if (ball.getPenetrability()) {
-                    broken_count=0;
-                }
-                    }
-                    
-                
-                
-                // 衝突による破壊判定
-                if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
-                    if(broken_count<=0){
-                        broken = true;
-                    }else{
-                        broken_count--;
-                    }
-                    
-                }
-                
+            if ((ball.getX() >= x) && (ball.getX() <= (x + 5)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
+                ball.setVx( -1 * ball.getVx());
+            if (ball.getPenetrability()) {
+                broken_count=0;
             }
-            
-            boolean isBroken() {
-                return broken;
-            }
-            
         }
+                    // ブロック右側に当たった場合
+            if ((ball.getX() >= (x + sizeX - 5)) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
+                ball.setVx( -1 * ball.getVx());
+            if (ball.getPenetrability()) {
+                broken_count=0;
+            }
+        }
+            if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + 5))) {
+                ball.setVy( -1 * ball.getVy());
+            if (ball.getPenetrability()) {
+                broken_count=0;
+            }
+        }
+            if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= (y + sizeY - 5)) && (ball.getY() <= (y + sizeY))) {
+                ball.setVy( -1 * ball.getVy());
+            if (ball.getPenetrability()) {
+                broken_count=0;
+            }
+        }
+        if ((ball.getX() >= x) && (ball.getX() <= (x + sizeX)) && (ball.getY() >= y) && (ball.getY() <= (y + sizeY))) {
+            if(broken_count<=0){
+                blockBreak.tokuten++;
+                broken = true;
+                add_ball = new Ball(x+sizeX/2,y+sizeY/2,2,5,8);
+            }else{
+                broken_count--;
+            }
+        }
+    }
+    boolean isBroken() {
+        return broken;
+    }
+}

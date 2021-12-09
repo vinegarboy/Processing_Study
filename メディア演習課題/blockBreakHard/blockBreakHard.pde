@@ -64,7 +64,9 @@ class BlockBreak {
     			if(!block[i][d].isBroken()){
        			block[i][d].collision(ball);
     				block[i][d].show();
-    			}
+    			}else{
+                    breakBlockNum++;
+                }
     		}
     	}
     // ブロックが残っているならばボール移動
