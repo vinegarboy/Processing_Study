@@ -6,7 +6,7 @@ void setup(){
 }
 
 void draw(){
-    background(240, 200, 145);
+    background(78,69,74);
     camera(100, -100, 100, 0, 0, 0, 0, 1, 0);
     axis(100);
     fill(255, 0, 0);
