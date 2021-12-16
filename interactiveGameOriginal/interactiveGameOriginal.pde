@@ -1,22 +1,26 @@
+int mode =0,level=0;
+PImage glass,bird_L,reticle,bird_R;
 import ddf.minim.*;
-
-Minim pl = new Minim(this);
-int mode=0;
-final int width_ = 600;
-final int height_ = 400;
-Fumen[] fumens;
-int select_key=0,nf=0;
-Note[] notes;
+String tex_path;
+int time = 0,score=0,tama = 0,tm = 6;
+boolean played = false;
+AudioSnippet spk1;
+Birds[] birds;
+Minim minim = new Minim(this);
 
 void setup() {
-    size(600,400);
-    colorMode(HSB, 360, 100, 100);
+    tex_path  = sketchPath()+"\\tex\\";
+    glass=loadImage(tex_path+"glass.png");
+    bird_L = loadImage(tex_path+"birdL.png");
+    bird_R = loadImage(tex_path+"birdR.png");
+    reticle = loadImage(tex_path+"reticle.png");
+    spk1 = minim.loadSnippet(sketchPath()+"\\Sounds\\HandGun.mp3");
+    noCursor();
     frameRate(60);
-    //selectFolder("譜面データのまとめたフォルダを選択してください","loadFile");
+    size(800, 600);
 }
 
 void draw() {
-    background(0,0,0);
     switch (mode) {
         case 0 :
             title();
@@ -25,98 +29,139 @@ void draw() {
             menu();
         break;
         case 2 :
-            play();
+            playscene();
         break;
     }
+    image(reticle, mouseX-100, mouseY-100, 200, 200);
 }
 
 void title(){
+    background(0,0,0);
+    textSize(64);
+    text("ShotBirds!!",0,64);
     textSize(48);
-    text("ClickCircle", 10, 50);
-    textSize(32);
-    text("Click!",width/2-64,height*2/3);
+    text("Click To Start!!",width/3,height*2/3);
     if(mousePressed){
-        mode = 1;
-    }
-}
-
-void loadFile(File selection){
-    File[] files = selection.listFiles();
-    String[] str = new String[1];
-    for(int i = 0; i < files.length; i++){
-        if(files[i].getPath().endsWith(".fum")){
-            append(str, files[i].getAbsolutePath());
-        }
-    }
-    fumens = new Fumen[str.length];
-    for(int i = 0;i<str.length;i++){
-        fumens[i] = new Fumen(str[i]);
+        mode=1;
     }
 }
 
 void menu(){
-    textSize(16);
-    for(int i = 0;i<fumens.length;i++){
-        fill(0,0,100);
-        if(select_key==i){
-            fill(180,100,100);
-        }
-        text(fumens[i].title+" by:"+fumens[i].comp,40,i*16);
+    background(0,0,0);
+    fill(0,0,200);
+    rect(0,0, width/3,height);
+    fill(0,200,0);
+    rect(width/3,0, width/3,height);
+    fill(200,0,0);
+    rect(width*2/3,0, width/3,height);
+    fill(255,255,255);
+    textSize(64);
+    text("Select Difficulty!!",0,64);
+    textSize(48);
+    text("Easy",0,height*2/3);
+    text("Normal",width/3,height*2/3);
+    text("Hard",width*2/3,height*2/3);
+}
+
+void playscene(){
+    time++;
+    if(!played){
+        played = true;
+        time = 0;
+        score = 0;
     }
-    if(keyPressed&&keyCode==ENTER){
-        mode=2;
-        pl = minim.loadFile(fumens[select_key].song_path);
-        notes = new Note[fumens[select_key].notes_d.length];
-        for(int i =0;i<notes.length;i++){
-            string[] da = split(fumens[select_key].notes_d[i], ':');
-            notes[i] = new Note(da[0],da[1],da[2]);
-        }
+    background(36,139,255);
+    image(glass, -50, height-150, width+100, 200);
+    textSize(36);
+    text("Time:"+((1+level)*3600-time)+"\nScore:"+(score)+"\n残弾数:"+tama,0,36);
+    rect(width-100, 0, 100,100);
+    if(time >= 3600*(1+level)){
+        mode = 3;
+        played=false;
+    }
+    for(int i = 0;i<birds.length;i++){
+        birds[i].move();
+        birds[i].draw();
     }
 }
 
-void play(){
-    if(nf>180){
-        pl.play();
-        for(int i =0;i<notes.length;i++){
-            notes[i].draw(nf);
+void mousePressed() {
+    spk1.rewind();
+    spk1.play();
+    if(mode==1){
+        if(mouseX<width/3){
+            mode=2;
+            level=0;
+            birds = new Birds[2];
+        }else if(mouseX<width*2/3){
+            mode=2;
+            level=1;
+            birds = new Birds[5];
+        }else if(mouseX<width){
+            mode=2;
+            level=2;
+            birds = new Birds[10];
+        }
+        tm = 6-level;
+        tama = tm;
+        for(int i = 0;i<birds.length;i++){
+            birds[i] = new Birds();
+            birds[i].init();
+        }
+    }
+    if(mode == 2){
+        if(mouseX>width-100&&mouseY<100){
+            tama++;
+        }else if(tama>0){
+            for(int i = 0;i<birds.length;i++){
+                birds[i].collision();
+            }
+            tama--;
         }
     }
 }
-
-class Fumen{
-    String title,comp,song_path;
-    String[] notes_d;
-    Fumen(String path){
-        String date="";
-        for(int i =0;i<loadStrings(path).length;i++){
-            date+=loadStrings(path)[i];
-        }
-        String[] dates = split(date, ',');
-        title = dates[0];
-        comp = dates[1];
-        song_path = dates[2];
-        notes_d = new String[dates.length-3];
-        for(int i =3;i<dates.length;i++){
-            notes_d[i-3] = dates[i];
-        }
-    }
+void stop(){
+    spk1.close();
+    minim.stop();
+    super.stop();
 }
 
-class Note{
-    int frame = 60;
-    final int d = 30;
-    float x,y;
-    int sf;
-    Note(float _x,float _y,int _sf){
-        x = _x;
-        y = _y;
-        sf = _sf;
+class Birds{
+    float x,y,v;
+    boolean turn;
+    void init(){
+        v=random(level+1, level+2);
+        if(int(random(10))>=5){
+            x=width-100;
+            turn = false;
+        }else{
+            turn = true;
+            x=-100;
+        }
+        y=height-random(200);
     }
-
-    void draw(int nf){
-        if(nf>=sf&&nf<=sf+60)
-        fill((360/60)*frame,100,100);
-        ellipse(x, y, d, d);
-        frame--;
+    void move(){
+        if(turn){
+            x+=v*v;
+        }else{
+            x-=v*v;
+        }
+        y-=v;
+        if(y<0||(x>width+100||x<-100)){
+            this.init();
+        }
+    }
+    void draw(){
+        if(turn){
+            image(bird_R, x, y, 100,100);
+        }else{
+            image(bird_L, x, y, 100,100);
+        }
+    }
+    void collision(){
+        if((mouseX>x&&mouseX<x+100)&&(mouseY>y&&mouseY<y+100)){
+            this.init();
+            score++;
+        }
     }
 }
