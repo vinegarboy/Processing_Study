@@ -78,6 +78,10 @@ void playscene(){
     textSize(36);
     text("Time:"+((1+level)*3600-time)+"\nScore:"+(score)+"\n残弾数:"+tama,0,36);
     rect(width-100, 0, 100,100);
+    fill(0,0,0);
+    textSize(24);
+    text("Reload",width-100,72);
+    fill(255,255,255);
     if(time >= 3600*(1+level)){
         mode = 3;
         played=false;
@@ -85,6 +89,14 @@ void playscene(){
     for(int i = 0;i<birds.length;i++){
         birds[i].move();
         birds[i].draw();
+    }
+    if(keyPressed){
+        if(key=='r'){
+            tama++;
+            if(tm<tama){
+                tama=tm;
+            }
+        }
     }
 }
 
@@ -98,8 +110,10 @@ void result(){
 }
 
 void mousePressed() {
-    spk1.rewind();
-    spk1.play();
+    if(mode!=2){
+        spk1.rewind();
+        spk1.play();
+    }
     if(mode==1){
         if(mouseX<width/3){
             mode=2;
@@ -131,6 +145,8 @@ void mousePressed() {
             for(int i = 0;i<birds.length;i++){
                 birds[i].collision();
             }
+            spk1.rewind();
+            spk1.play();
             tama--;
         }
     }
