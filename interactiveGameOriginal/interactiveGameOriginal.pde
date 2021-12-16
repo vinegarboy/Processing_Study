@@ -31,6 +31,9 @@ void draw() {
         case 2 :
             playscene();
         break;
+        case 3:
+            result();
+        break;
     }
     image(reticle, mouseX-100, mouseY-100, 200, 200);
 }
@@ -85,6 +88,15 @@ void playscene(){
     }
 }
 
+void result(){
+    background(0,0,0);
+    textSize(128);
+    text("Result",width/2-(64*4),64*2);
+    textSize(48);
+    text("Score:"+score,width/2-(32*4),64*4);
+    text("Click Screen to menu!!",width/2-(64*5),64*5);
+}
+
 void mousePressed() {
     spk1.rewind();
     spk1.play();
@@ -102,7 +114,7 @@ void mousePressed() {
             level=2;
             birds = new Birds[10];
         }
-        tm = 6-level;
+        tm = 12-level;
         tama = tm;
         for(int i = 0;i<birds.length;i++){
             birds[i] = new Birds();
@@ -112,12 +124,18 @@ void mousePressed() {
     if(mode == 2){
         if(mouseX>width-100&&mouseY<100){
             tama++;
+            if(tm<tama){
+                tama=tm;
+            }
         }else if(tama>0){
             for(int i = 0;i<birds.length;i++){
                 birds[i].collision();
             }
             tama--;
         }
+    }
+    if(mode==3){
+        mode = 1;
     }
 }
 void stop(){
